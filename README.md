@@ -7,6 +7,7 @@ I'm currently in the process of translating my currently existing 'bashping' cod
 # Current Update
 The code is functional but still requires some bug fixes and additional features.  These include:
  - resolve subprocess KeyboardInterupt error on Ctrl-C exit
+ - create check for fping install before executing
  - add ETA estimation functionality
  - customize help/usage text for -h option
  - add option to omit .0 and .255 addresses? idk
