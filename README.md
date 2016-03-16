@@ -39,6 +39,7 @@ The code is functional but still requires some bug fixes and additional features
  - create check for fping install before executing
  - add ETA estimation functionality
  - customize help/usage text for -h option
+ - implement ability to handle IP's in CIDR notation
  - add option to omit .0 and .255 addresses? idk
  - TESTING
 
