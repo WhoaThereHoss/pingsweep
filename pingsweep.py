@@ -58,9 +58,11 @@ def make_ip_list(ipBeg, ipEnd):
         print "'-h' option for help menu"
         sys.exit()
 
-def make_grep_string(v, r):
+def make_grep_string(v, r, d):
     grep_string = ""
-    if v:
+    if d:
+        return grep_string
+    elif v:
         if r:
             grep_string = " 2>&1 | grep -F -v '1/1/0%'"
         else:
@@ -81,7 +83,7 @@ parser.add_option('-v', '--verbose',
                   dest="verbose",
                   default=False,
                   action="store_true",
-                  help='include all fping output',
+                  help='include fping statistics for each ping',
                  )
 parser.add_option('-r', '--reverse',
                   dest="reverse",
@@ -94,6 +96,12 @@ parser.add_option('-t', '--timeout',
                   default=200,
                   help='define a ping timeout in miliseconds (default is 200)',
                  )
+parser.add_option('-d', '--debug',
+                  dest="debug",
+                  default=False,
+                  action="store_true",
+                  help='display all pings, failed and successful',
+                 )
 
 options, remainder = parser.parse_args()
 
@@ -103,6 +111,7 @@ options, remainder = parser.parse_args()
 verbose = options.verbose
 reverse = options.reverse
 timeout = options.timeout
+debug = options.debug
 ipBeg = "none"
 ipEnd = "none"
 single = False
@@ -150,11 +159,14 @@ if timeout != 200:
 if reverse:
     print "[+] Reverse option set - displaying failed pings\n"
 
+if debug:
+    print "[+] Debug option set - displaying all pings\n"
+
 print "Scan start: %s\n......" % (time.ctime())
 
 grep_string = ""
 for ip in ip_list:
-    bash_string = "fping -a -c1 -t%s %s%s" % (timeout, ip, make_grep_string(verbose, reverse))
+    bash_string = "fping -a -c1 -t%s %s%s" % (timeout, ip, make_grep_string(verbose, reverse, debug))
     subprocess.call(bash_string, shell=True)
 
 print "......\nScan finished at: %s" % (time.ctime())
