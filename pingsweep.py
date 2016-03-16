@@ -167,6 +167,11 @@ print "Scan start: %s\n......" % (time.ctime())
 grep_string = ""
 for ip in ip_list:
     bash_string = "fping -a -c1 -t%s %s%s" % (timeout, ip, make_grep_string(verbose, reverse, debug))
-    subprocess.call(bash_string, shell=True)
+    try:
+        subprocess.call(bash_string, shell=True)
+    except:
+        print "\nExiting..."
+        print "Scan stopped at IP %s on %s" % (ip, time.ctime())
+        sys.exit()
 
 print "......\nScan finished at: %s" % (time.ctime())
