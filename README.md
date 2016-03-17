@@ -36,14 +36,14 @@ I'm currently in the process of translating my currently existing 'bashping' cod
 
 # Current Update
 The code is functional but still requires some bug fixes and additional features.  These include:
- - create check for fping install before executing
  - add ETA estimation functionality
- - customize help/usage text for -h option
  - implement ability to handle IP's in CIDR notation
  - add option to omit .0 and .255 addresses? idk
  - TESTING
 
 Fixes:
+ - customized help/usage text for -h option
+ - created check for fping install before executing
  - resolved subprocess KeyboardInterupt error on Ctrl-C exit
  - added timestamp and "last IP scanned" on Ctrl-C exit
 
