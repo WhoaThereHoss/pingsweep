@@ -10,9 +10,23 @@ import time
 import optparse
 import sys
 import subprocess
+import os
 
 
 ## Define functions
+
+def check_requirements():
+    try:
+	FNULL = open(os.devnull, 'w')
+	subprocess.call(["fping", "-v"], stdout=FNULL, stderr=subprocess.STDOUT)
+    except OSError as e:
+	if e.errno == os.errno.ENOENT:
+	    print "fping is not installed. Please install fping and run again. Exiting..."
+	    sys.exit()
+	else:
+	    print "fping error:"
+	    raise
+	    sys.exit()
 
 def validate_ip(ip):
     a = ip.split('.')
@@ -75,6 +89,11 @@ def make_grep_string(v, r, d):
     return grep_string
 
 
+## Check if fping is installed
+
+check_requirements()
+
+
 ## Get Options
 
 parser = optparse.OptionParser()
@@ -117,6 +136,7 @@ ipEnd = "none"
 single = False
 
 
+## Handle extra arguments (only accepts exactly one or two extra arguments as IP addresses)
 
 if len(remainder) == 1:
     if validate_ip(remainder[0]):
@@ -146,7 +166,13 @@ else:
 if single:
     ipEnd = ipBeg
 
+
+## Create list of IP addresses to ping
+
 ip_list = make_ip_list(ipBeg, ipEnd)
+
+
+## Print selected options before starting the scan
 
 print "Starting ping sweep on %s through %s...\n" % (ip_list[0], ip_list[-1])
     
@@ -163,6 +189,9 @@ if debug:
     print "[+] Debug option set - displaying all pings\n"
 
 print "Scan start: %s\n......" % (time.ctime())
+
+
+## Begin scanning IP addresses by executing fping command on each IP
 
 grep_string = ""
 for ip in ip_list:
