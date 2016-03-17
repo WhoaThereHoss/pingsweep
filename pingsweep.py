@@ -121,6 +121,7 @@ parser.add_option('-d', '--debug',
                   action="store_true",
                   help='display all pings, failed and successful',
                  )
+parser.set_usage("Usage: ./pingsweep.py [options] <start-ip> <end-ip>\n\nExample: ./pingsweep.py -t 150 10.0.5.1 10.0.20.255\nExample: ./pingsweep.py 192.168.1.0")
 
 options, remainder = parser.parse_args()
 
