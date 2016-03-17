@@ -31,23 +31,13 @@ Example: "./pingsweep.py 192.168.1.0"
 Result: pings all 256 IP's from 192.168.1.0 to 1922.168.1.255
 
 
-# Under Construction
-I'm currently in the process of translating my currently existing 'bashping' code, written in bash, into python here.  The original pingsweep can be found at "https://github.com/sirpsycho/bashping".
-
 # Current Update
-The code is functional but still requires some bug fixes and additional features.  These include:
+Ideas for improvement:
  - add ETA estimation functionality
  - implement ability to handle IP's in CIDR notation
- - add option to omit .0 and .255 addresses? idk
- - TESTING
 
-Fixes:
+Recent fixes and added functionality:
  - customized help/usage text for -h option
  - created check for fping install before executing
  - resolved subprocess KeyboardInterupt error on Ctrl-C exit
  - added timestamp and "last IP scanned" on Ctrl-C exit
-
-In relationship to the bashping project on which this is based, this now includes a more functional way of creating the IP range.  This includes:
- - the ability to define starting and ending IPs down to the last octet (bashping would always ping from 0 to 255 on the last octet)
- - the ability to ping up to a full A-block (16.8 million IPs) in a single command execution
- - if only one IP is supplied, it will only ping that ip, unless the last octet is a '0', in which case it will ping the whole /24
