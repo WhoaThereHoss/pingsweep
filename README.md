@@ -33,6 +33,7 @@ Result: pings all 256 IP's from 192.168.1.0 to 1922.168.1.255
 
 # Current Update
 Ideas for improvement:
+ - add '-l' option to enter a list of IP's
  - add ETA estimation functionality
  - implement ability to handle IP's in CIDR notation
 
