@@ -40,10 +40,6 @@ def validate_ip(ip):
             return False
     return True
 
-def parse_ip(ip):
-    a = ip.split('.')
-    return a
-
 def make_ip_list(ipBeg, ipEnd):
     
     ip_list = []
@@ -121,6 +117,11 @@ parser.add_option('-d', '--debug',
                   action="store_true",
                   help='display all pings, failed and successful',
                  )
+parser.add_option('-l', '--list',
+                  dest="ip_file",
+                  default='',
+                  help='define a text file of one IP per line to ping',
+                 )
 parser.set_usage("Usage: ./pingsweep.py [options] <start-ip> <end-ip>\n\nExample: ./pingsweep.py -t 150 10.0.5.1 10.0.20.255\nExample: ./pingsweep.py 192.168.1.0")
 
 options, remainder = parser.parse_args()
@@ -132,14 +133,20 @@ verbose = options.verbose
 reverse = options.reverse
 timeout = options.timeout
 debug = options.debug
+ip_file = options.ip_file
 ipBeg = "none"
 ipEnd = "none"
 single = False
+ip_list = []
 
 
 ## Handle extra arguments (only accepts exactly one or two extra arguments as IP addresses)
 
-if len(remainder) == 1:
+if len(remainder) == 0:
+    if ip_file == '':
+        print "Please define IP range to ping. Use -h option for usage format."
+        sys.exit()
+elif len(remainder) == 1:
     if validate_ip(remainder[0]):
         single = True
         ipBeg = remainder[0]
@@ -170,7 +177,22 @@ if single:
 
 ## Create list of IP addresses to ping
 
-ip_list = make_ip_list(ipBeg, ipEnd)
+if ip_file == '':
+    ip_list = make_ip_list(ipBeg, ipEnd)
+else:
+    try:
+        with open(ip_file, 'r') as f:
+            for line in f:
+                line = line.rstrip()
+                if not line == "":
+                    if validate_ip(line):
+                        ip_list.append(line)
+                    else:
+                        print "Invalid IP list file format -- IP list file must have one valid IPv4 address per line with no leading or trailing spaces."
+                        sys.exit()
+    except:
+        print "Error: invalid file '%s'" % (ip_file)
+        sys.exit()
 
 
 ## Print selected options before starting the scan
