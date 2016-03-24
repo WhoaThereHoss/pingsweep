@@ -20,15 +20,15 @@ This utility is meant to quickly ping a large group of IP's.  Currently, in one 
 
 =============================
 
-Example: "./pingsweep.py -t 150 10.0.0.0 10.0.5.255"
+Ping a range: `./pingsweep.py 10.0.0.0 10.0.5.255`
 
-Result: pings all hosts from "10.0.0.0" through "10.0.5.255" (inclucive) with a ping timeout of 150 miliseconds
 
-=============================
 
-Example: "./pingsweep.py 192.168.1.0"
+Ping a list: `./pingsweep.py -l IP_list.txt`
 
-Result: pings all 256 IP's from 192.168.1.0 to 1922.168.1.255
+
+
+Ping a /24 C-block: `./pingsweep.py 192.168.1.0"`
 
 
 # Current Update
