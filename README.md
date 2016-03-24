@@ -33,11 +33,11 @@ Result: pings all 256 IP's from 192.168.1.0 to 1922.168.1.255
 
 # Current Update
 Ideas for improvement:
- - add '-l' option to enter a list of IP's
  - add ETA estimation functionality
  - implement ability to handle IP's in CIDR notation
 
 Recent fixes and added functionality:
+ - added '-l' option to enter a text file list of IP's to ping
  - customized help/usage text for -h option
  - created check for fping install before executing
  - resolved subprocess KeyboardInterupt error on Ctrl-C exit
