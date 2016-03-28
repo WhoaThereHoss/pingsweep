@@ -28,7 +28,7 @@ Ping a list: `./pingsweep.py -l IP_list.txt`
 
 
 
-Ping a /24 C-block: `./pingsweep.py 192.168.1.0"`
+Ping a /24 C-block: `./pingsweep.py 192.168.1.0`
 
 
 # Current Update
