@@ -1,8 +1,7 @@
 #!/usr/bin/python
 
-### IPv4 Pingsweeper (Class B)
-### 
-### 
+### IPv4 Pingsweeper
+
 
 ## Imports
 
