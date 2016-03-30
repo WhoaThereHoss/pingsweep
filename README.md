@@ -3,7 +3,15 @@ Lightweight IPv4 Pingsweeper - quickly ping many IP addresses
 
 # Description
 
-This utility is meant to quickly ping a large group of IP's.  Currently, in one command execution, this script can ping sweep up to one IPV4 A-block (x.x.x.x/8).
+This utility provides a simple interface allowing a user to quickly ping a large group of IP's.
+
+============================================
+
+ - begin enumeration on unknown networks
+ - check connectivity of a list of networked devices
+ - define a custom ping timeout for faster or more thorough scans
+ - ping up to one full IPv4 A-block (x.x.x.x/8)
+ - default output is in a list-friendly format
 
 # Requirements
 
@@ -40,5 +48,4 @@ Recent fixes and added functionality:
  - added '-l' option to enter a text file list of IP's to ping
  - customized help/usage text for -h option
  - created check for fping install before executing
- - resolved subprocess KeyboardInterupt error on Ctrl-C exit
  - added timestamp and "last IP scanned" on Ctrl-C exit
