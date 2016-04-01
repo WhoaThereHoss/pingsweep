@@ -27,6 +27,13 @@ def check_requirements():
 	    raise
 	    sys.exit()
 
+def is_int(rawvar):
+    try:
+	int(rawvar)
+	return True
+    except ValueError:
+	return False
+
 def validate_ip(ip):
     a = ip.split('.')
     if len(a) != 4:
@@ -131,11 +138,17 @@ options, remainder = parser.parse_args()
 verbose = options.verbose
 reverse = options.reverse
 timeout = options.timeout
+if not is_int(timeout):
+    print "Invalid timeout '%s' - must be an integer" % timeout
+    sys.exit()
+elif int(timeout) < 50:
+    print "Invalid timeout '%s' - minimum timeout is 50" % timeout
+    sys.exit()
+
 debug = options.debug
 ip_file = options.ip_file
 ipBeg = "none"
 ipEnd = "none"
-single = False
 ip_list = []
 
 
@@ -147,8 +160,7 @@ if len(remainder) == 0:
         sys.exit()
 elif len(remainder) == 1:
     if validate_ip(remainder[0]):
-        single = True
-        ipBeg = remainder[0]
+        ipBeg = ipEnd = remainder[0]
     else:
         print "Invalid IP Address '%s'" % (remainder[0])
         print "'-h' option for help menu"
@@ -169,9 +181,6 @@ elif len(remainder) == 2:
 else:
     print "Invalid arguments. Use -h option for usage format."
     sys.exit()
-    
-if single:
-    ipEnd = ipBeg
 
 
 ## Create list of IP addresses to ping
