@@ -1,9 +1,9 @@
 # pingsweep
-Lightweight IPv4 Pingsweeper - quickly ping many IP addresses
+Lightweight Pingsweeper - quickly ping many hosts
 
 # Description
 
-This utility provides a simple interface allowing a user to quickly ping a large group of IP's.
+This utility provides a simple interface allowing a user to quickly ping a large group of hosts by IPv4 address or by hostname.
 
 ============================================
 
