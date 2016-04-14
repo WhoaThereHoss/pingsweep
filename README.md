@@ -13,14 +13,6 @@ This utility provides a simple interface allowing a user to quickly ping a large
  - ping up to one full IPv4 A-block (x.x.x.x/8)
  - default output is in a list-friendly format
 
-# Requirements
-
-- BASH
-- python
-- fping
-
-(should work on most linux distro's by default - may need to install fping)
-
 
 # Usage
 
@@ -37,15 +29,3 @@ Ping a list: `./pingsweep.py -l IP_list.txt`
 
 
 Ping a /24 C-block: `./pingsweep.py 192.168.1.0`
-
-
-# Current Update
-Ideas for improvement:
- - add ETA estimation functionality
- - implement ability to handle IP's in CIDR notation
-
-Recent fixes and added functionality:
- - added '-l' option to enter a text file list of IP's to ping
- - customized help/usage text for -h option
- - created check for fping install before executing
- - added timestamp and "last IP scanned" on Ctrl-C exit
