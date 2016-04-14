@@ -74,6 +74,21 @@ def make_ip_list(ipBeg, ipEnd):
         print "'-h' option for help menu"
         sys.exit()
 
+def are_you_sure(numOfHosts):
+    valid = {"yes": True, "y": True, "ye": True,
+             "no": False, "n": False}
+
+    while True:
+        sys.stdout.write("Ping %s hosts? [Y/n] " % numOfHosts)
+        choice = raw_input().lower()
+        if choice == '':
+            return valid["yes"]
+        elif choice in valid:
+            return valid[choice]
+        else:
+            sys.stdout.write("Please respond with 'yes' or 'no' "
+                             "(or 'y' or 'n').\n")
+
 def make_grep_string(v, r, d):
     grep_string = ""
     if d:
@@ -202,6 +217,12 @@ else:
         print "Error: invalid file '%s'" % (ip_file)
         sys.exit()
 
+## If hosts list exceeds 256, prompt for confirmation
+
+if len(ip_list) > 256:
+    if not are_you_sure(len(ip_list)):
+        print "Exiting..."
+        sys.exit()
 
 ## Print selected options before starting the scan
 
