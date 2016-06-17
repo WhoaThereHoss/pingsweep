@@ -10,6 +10,7 @@ import optparse
 import sys
 import subprocess
 import os
+import socket
 
 
 ## Define functions
@@ -89,21 +90,12 @@ def are_you_sure(numOfHosts):
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
 
-def make_grep_string(v, r, d):
-    grep_string = ""
-    if d:
-        return grep_string
-    elif v:
-        if r:
-            grep_string = " 2>&1 | grep -F -v '1/1/0%'"
-        else:
-            grep_string = " 2>&1 | grep -F -v '1/0/100%'"
-    else:
-        if r:
-            grep_string = " 2>&1 | grep '1/0/100%' | cut -f1 -d' '"
-        else:
-            grep_string = " 2>&1 | grep '1/1/0%' | cut -f1 -d' '"
-    return grep_string
+def resolve(ip):
+    try:
+        hostname = socket.gethostbyaddr(ip)[0]
+        return hostname
+    except:
+        return ''
 
 
 ## Check if fping is installed
@@ -132,6 +124,12 @@ parser.add_option('-t', '--timeout',
                   default=200,
                   help='define a ping timeout in miliseconds (default is 200)',
                  )
+parser.add_option('-n', '--hostnames',
+                  dest="hostnames",
+                  default=False,
+                  action="store_true",
+                  help='Attempt to resolve hostnames for successful pings',
+                 )
 parser.add_option('-d', '--debug',
                   dest="debug",
                   default=False,
@@ -159,7 +157,7 @@ if not is_int(timeout):
 elif int(timeout) < 50:
     print "Invalid timeout '%s' - minimum timeout is 50" % timeout
     sys.exit()
-
+hostnames = options.hostnames
 debug = options.debug
 ip_file = options.ip_file
 ipBeg = "none"
@@ -237,6 +235,9 @@ if timeout != 200:
 if reverse:
     print "[+] Reverse option set - displaying failed pings\n"
 
+if hostnames:
+    print "[+] Hostnames option set - resolving hosts\n"
+
 if debug:
     print "[+] Debug option set - displaying all pings\n"
 
@@ -245,11 +246,33 @@ print "Scan start: %s\n......" % (time.ctime())
 
 ## Begin scanning IP addresses by executing fping command on each IP
 
-grep_string = ""
 for ip in ip_list:
-    bash_string = "fping -a -c1 -t%s %s%s" % (timeout, ip, make_grep_string(verbose, reverse, debug))
+    bash_string = "fping -a -c1 -t%s %s" % (timeout, ip)
     try:
-        subprocess.call(bash_string, shell=True)
+        proc = subprocess.Popen(bash_string.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        output = proc.communicate()[0].split("\n")[0]
+        if debug:
+            print output
+        else:
+            if reverse:
+                if "1/0/100" in output:
+                    if verbose:
+                        print output
+                    else:
+                        print output.split(" ",1)[0]
+            else:
+                if "1/1/0" in output:
+                    if hostnames:
+                        hostname = resolve(ip)
+                        if verbose:
+                            print output, hostname
+                        else:
+                            print output.split(" ",1)[0], hostname
+                    else:
+                        if verbose:
+                            print output
+                        else:
+                            print output.split(" ",1)[0]
     except:
         print "\nExiting..."
         print "Scan stopped at IP %s on %s" % (ip, time.ctime())
