@@ -36,12 +36,14 @@ Ping a /24 C-block: `./pingsweep.py 192.168.1.0`
 ./pingsweep.py -h
 Usage: ./pingsweep.py [options] <start-ip> <end-ip>
 
+Example: ./pingsweep.py 172.16.0.1 172.16.255.255
+
 Options:
   -h, --help                    show this help message and exit
-  -v, --verbose                 include fping statistics for each ping
-  -r, --reverse                 display failed pings instead of successful pings
-  -t TIMEOUT, --timeout=TIMEOUT define a ping timeout in miliseconds (default is 200)
-  -n, --hostnames               Attempt to resolve hostnames for successful pings
   -d, --debug                   display all pings, failed and successful
   -l IP_FILE, --list=IP_FILE    define a text file of one IP per line to ping
+  -n, --hostnames               Attempt to resolve hostnames for successful pings
+  -r, --reverse                 display failed pings instead of successful pings
+  -t TIMEOUT, --timeout=TIMEOUT define a ping timeout in miliseconds (default is 200)
+  -v, --verbose                 include fping statistics for each ping
  ```
