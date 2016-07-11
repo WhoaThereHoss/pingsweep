@@ -107,11 +107,22 @@ check_requirements()
 
 parser = optparse.OptionParser()
 
-parser.add_option('-v', '--verbose',
-                  dest="verbose",
+parser.add_option('-d', '--debug',
+                  dest="debug",
                   default=False,
                   action="store_true",
-                  help='include fping statistics for each ping',
+                  help='display all pings, failed and successful',
+                 )
+parser.add_option('-n', '--hostnames',
+                  dest="hostnames",
+                  default=False,
+                  action="store_true",
+                  help='Attempt to resolve hostnames for successful pings',
+                 )
+parser.add_option('-l', '--list',
+                  dest="ip_file",
+                  default='',
+                  help='define a text file of one IP per line to ping',
                  )
 parser.add_option('-r', '--reverse',
                   dest="reverse",
@@ -124,24 +135,13 @@ parser.add_option('-t', '--timeout',
                   default=200,
                   help='define a ping timeout in miliseconds (default is 200)',
                  )
-parser.add_option('-n', '--hostnames',
-                  dest="hostnames",
+parser.add_option('-v', '--verbose',
+                  dest="verbose",
                   default=False,
                   action="store_true",
-                  help='Attempt to resolve hostnames for successful pings',
+                  help='include fping statistics for each ping',
                  )
-parser.add_option('-d', '--debug',
-                  dest="debug",
-                  default=False,
-                  action="store_true",
-                  help='display all pings, failed and successful',
-                 )
-parser.add_option('-l', '--list',
-                  dest="ip_file",
-                  default='',
-                  help='define a text file of one IP per line to ping',
-                 )
-parser.set_usage("Usage: ./pingsweep.py [options] <start-ip> <end-ip>\n\nExample: ./pingsweep.py -t 150 10.0.5.1 10.0.20.255\nExample: ./pingsweep.py 192.168.1.0")
+parser.set_usage("Usage: ./pingsweep.py [options] <start-ip> <end-ip>\n\nExample: ./pingsweep.py 172.16.0.1 172.16.255.255")
 
 options, remainder = parser.parse_args()
 
@@ -246,6 +246,7 @@ print "Scan start: %s\n......" % (time.ctime())
 
 ## Begin scanning IP addresses by executing fping command on each IP
 
+success = 0
 for ip in ip_list:
     bash_string = "fping -a -c1 -t%s %s" % (timeout, ip)
     try:
@@ -260,8 +261,11 @@ for ip in ip_list:
                         print output
                     else:
                         print output.split(" ",1)[0]
+                else:
+                    success += 1
             else:
                 if "1/1/0" in output:
+                    success += 1
                     if hostnames:
                         hostname = resolve(ip)
                         if verbose:
@@ -278,4 +282,5 @@ for ip in ip_list:
         print "Scan stopped at IP %s on %s" % (ip, time.ctime())
         sys.exit()
 
-print "......\nScan finished at: %s" % (time.ctime())
+print "......\nSuccessful pings: %s/%s (%s%s)" % (success, len(ip_list), (success * 100 / len(ip_list)), '%')
+print "Scan finished at: %s" % (time.ctime())
