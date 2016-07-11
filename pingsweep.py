@@ -113,16 +113,16 @@ parser.add_option('-d', '--debug',
                   action="store_true",
                   help='display all pings, failed and successful',
                  )
+parser.add_option('-l', '--list',
+                  dest="ip_file",
+                  default='',
+                  help='define a text file of one IP per line to ping',
+                 )
 parser.add_option('-n', '--hostnames',
                   dest="hostnames",
                   default=False,
                   action="store_true",
                   help='Attempt to resolve hostnames for successful pings',
-                 )
-parser.add_option('-l', '--list',
-                  dest="ip_file",
-                  default='',
-                  help='define a text file of one IP per line to ping',
                  )
 parser.add_option('-r', '--reverse',
                   dest="reverse",
