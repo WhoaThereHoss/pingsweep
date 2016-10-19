@@ -57,7 +57,7 @@ def make_ip_list(ipBeg, ipEnd):
         if start[3] == 0:
             end[3] = 255
     
-    if (end[0] == start[0] and end[1] > start[1]) or (end[0] == start[0] and end[1] == start[1] and end[2] > start[2]) or (end[0] == start[0] and end[1] == start[1] and end[2] == start[2] and end[3] >= start[3]):
+    if end[0] > start[0] or (end[0] == start[0] and end[1] > start[1]) or (end[0] == start[0] and end[1] == start[1] and end[2] > start[2]) or (end[0] == start[0] and end[1] == start[1] and end[2] == start[2] and end[3] >= start[3]):
         temp = start
 
         ip_list.append(ipBeg)
