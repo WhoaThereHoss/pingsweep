@@ -10,7 +10,6 @@ This utility provides a simple interface allowing a user to quickly ping a large
  - begin enumeration on unknown networks
  - check connectivity of a list of networked devices
  - define a custom ping timeout for faster or more thorough scans
- - ping up to one full IPv4 A-block (x.x.x.x/8)
  - default output is in a list-friendly format
 
 
