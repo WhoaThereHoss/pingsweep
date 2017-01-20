@@ -46,3 +46,10 @@ Options:
   -t TIMEOUT, --timeout=TIMEOUT define a ping timeout in miliseconds (default is 200)
   -v, --verbose                 include fping statistics for each ping
  ```
+
+# Installation
+pingsweep is available as an installable python module. Try running:
+```
+pip install pingsweep
+```
+Or you can download and run pingsweep.py from this repo.
