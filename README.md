@@ -15,27 +15,27 @@ This utility provides a simple interface allowing a user to quickly ping a large
 
 # Usage
 
-./pingsweep.py [options] start-ip end-ip
+pingsweep [options] start-ip end-ip
 
 =============================
 
-Ping a range: `./pingsweep.py 10.0.0.0 10.0.5.255`
+Ping a range: `pingsweep 10.0.0.0 10.0.5.255`
 
 
 
-Ping a list: `./pingsweep.py -l IP_list.txt`
+Ping a list: `pingsweep -l IP_list.txt`
 
 
 
-Ping a /24 C-block: `./pingsweep.py 192.168.1.0`
+Ping a /24 C-block: `pingsweep 192.168.1.0`
 
 =============================
 
 ```
-./pingsweep.py -h
-Usage: ./pingsweep.py [options] <start-ip> <end-ip>
+pingsweep -h
+Usage: pingsweep [options] <start-ip> <end-ip>
 
-Example: ./pingsweep.py 172.16.0.1 172.16.255.255
+Example: pingsweep 172.16.0.1 172.16.255.255
 
 Options:
   -h, --help                    show this help message and exit
