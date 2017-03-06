@@ -8,8 +8,10 @@ import subprocess
 import os
 import socket
 import itertools
-from netaddr import IPNetwork
-
+try:
+	from netaddr import IPNetwork
+except:
+	print("\033[1m\033[91m[!]\033[0m Error: netaddr package not found. 'pip install netaddr' to use CIDR notation")
 
 def main():
 
