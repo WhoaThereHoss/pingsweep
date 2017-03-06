@@ -7,11 +7,18 @@ import sys
 import subprocess
 import os
 import socket
+import itertools
+from netaddr import IPNetwork
 
 
 def main():
 
 	## Define functions
+
+	def print_err(desc):
+		print("\033[1m\033[91m[!]\033[0m Error: %s" % desc)
+		print("Use '-h' option for help menu")
+		sys.exit()
 
 	def check_requirements():
 		try:
@@ -19,10 +26,8 @@ def main():
 			subprocess.call(["fping", "-v"], stdout=FNULL, stderr=subprocess.STDOUT)
 		except OSError as e:
 			if e.errno == os.errno.ENOENT:
-				print("fping is not installed. Please install fping and run again. Exiting...")
-				sys.exit()
+				print_err("fping is not installed. Please install fping and run again. Exiting...")
 			else:
-				print("fping error:")
 				raise
 				sys.exit()
 
@@ -45,33 +50,56 @@ def main():
 				return False
 		return True
 
-	def make_ip_list(ipBeg, ipEnd):
-		
+	def createiplist_cidr(ipstring):
+		iplist = []
+		try:
+			for ip in IPNetwork(ipstring):
+				iplist.append(ip)
+		except:
+			print_err("invalid CIDR notation")
+		return iplist
+
+	def createiplist_dash(input_string):
+		iplist = []
+		try:
+			octets = input_string.split('.')
+			chunks = [map(int, octet.split('-')) for octet in octets]
+			ranges = [range(c[0], c[1] + 1) if len(c) == 2 else c for c in chunks]
+
+			for address in itertools.product(*ranges):
+				iplist.append('.'.join(map(str, address)))
+		except:
+			print_err("invalid dash notation")
+		return iplist
+
+	def createiplist_range(begip, endip):
 		ip_list = []
-		start = list(map(int, ipBeg.split(".")))
-		end = list(map(int, ipEnd.split(".")))
-		
-		if ipBeg == ipEnd:
-			if start[3] == 0:
-				end[3] = 255
-		
-		if end[0] > start[0] or (end[0] == start[0] and end[1] > start[1]) or (end[0] == start[0] and end[1] == start[1] and end[2] > start[2]) or (end[0] == start[0] and end[1] == start[1] and end[2] == start[2] and end[3] >= start[3]):
-			temp = start
 
-			ip_list.append(ipBeg)
-			while temp != end:
-				start[3] += 1
-				for i in (3, 2, 1):
-					if temp[i] == 256:
-						temp[i] = 0
-						temp[i-1] += 1
-				ip_list.append(".".join(map(str, temp)))
+		try:
+			start = list(map(int, begip.split(".")))
+			end = list(map(int, endip.split(".")))
+		
+			if begip == endip:
+				if start[3] == 0:
+					end[3] = 255
+		
+			if end[0] > start[0] or (end[0] == start[0] and end[1] > start[1]) or (end[0] == start[0] and end[1] == start[1] and end[2] > start[2]) or (end[0] == start[0] and end[1] == start[1] and end[2] == start[2] and end[3] >= start[3]):
+				temp = start
 
-			return ip_list
-		else:
-			print("Error - The second IP must be greater than or equal to the first IP.")
-			print("'-h' option for help menu")
-			sys.exit()
+				ip_list.append(begip)
+				while temp != end:
+					start[3] += 1
+					for i in (3, 2, 1):
+						if temp[i] == 256:
+							temp[i] = 0
+							temp[i-1] += 1
+					ip_list.append(".".join(map(str, temp)))
+
+				return ip_list
+			else:
+				print_err("The second IP must be greater than or equal to the first IP.")
+		except:
+			print_err("invalid range notation")
 
 	def are_you_sure(numOfHosts):
 		valid = {"yes": True, "y": True, "ye": True,
@@ -94,11 +122,6 @@ def main():
 			return hostname
 		except:
 			return ''
-
-
-	## Check if fping is installed
-
-	check_requirements()
 
 
 	## Get Options
@@ -139,7 +162,13 @@ def main():
 			action="store_true",
 			help='include fping statistics for each ping',
 			)
-	parser.set_usage("Usage: ./pingsweep.py [options] <start-ip> <end-ip>\n\nExample: ./pingsweep.py 172.16.0.1 172.16.255.255")
+	parser.set_usage("""Usage: pingsweep [options] ip_range
+
+Examples:
+  pingsweep 10.0.0.0/24
+  pingsweep 10.0.0.0-255
+  pingsweep 10.0.0.0 10.0.0.255
+		""")
 
 	options, remainder = parser.parse_args()
 
@@ -150,16 +179,14 @@ def main():
 	reverse = options.reverse
 	timeout = options.timeout
 	if not is_int(timeout):
-		print("Invalid timeout '%s' - must be an integer" % timeout)
-		sys.exit()
+		print_err("Invalid timeout '%s' - must be an integer" % timeout)
 	elif int(timeout) < 50:
-		print("Invalid timeout '%s' - minimum timeout is 50" % timeout)
-		sys.exit()
+		print_err("Invalid timeout '%s' - minimum timeout is 50" % timeout)
 	hostnames = options.hostnames
 	debug = options.debug
 	ip_file = options.ip_file
-	ipBeg = "none"
-	ipEnd = "none"
+	begip = "none"
+	endip = "none"
 	ip_list = []
 
 
@@ -167,57 +194,43 @@ def main():
 
 	if len(remainder) == 0:
 		if ip_file == '':
-			print("Please define IP range to ping. Use -h option for usage format.")
-			sys.exit()
+			print_err("Please define IP range to ping")
+		else:
+			try:
+				with open(ip_file, 'r') as f:
+					for line in f:
+						line = line.rstrip()
+						if not line == "":
+							if validate_ip(line):
+								ip_list.append(line)
+							else:
+								print_err("Invalid IP list file format -- IP list file must have one valid IPv4 address per line with no leading or trailing spaces.")
+			except:
+				print_err("invalid file '%s'" % (ip_file))
 	elif len(remainder) == 1:
-		if validate_ip(remainder[0]):
-			ipBeg = ipEnd = remainder[0]
+
+		ipstring = remainder[0]
+		if "/" in ipstring:
+			ip_list = createiplist_cidr(ipstring)
+		elif "-" in ipstring:
+			ip_list = createiplist_dash(ipstring)
 		else:
-			print("Invalid IP Address '%s'" % (remainder[0]))
-			print("'-h' option for help menu")
-			sys.exit()
+			print_err("invalid IP format")
+
 	elif len(remainder) == 2:
-		if validate_ip(remainder[0]):
-			ipBeg = remainder[0]
-		else:
-			print("Invalid IP Address '%s'" % (remainder[0]))
-			print("'-h' option for help menu")
-			sys.exit()
-		if validate_ip(remainder[1]):
-			ipEnd = remainder[1]
-		else:
-			print("Invalid IP Address '%s'" % (remainder[1]))
-			print("'-h' option for help menu")
-			sys.exit()
+
+		begip = remainder[0]
+		endip = remainder[1]
+		ip_list = createiplist_range(begip, endip)
+
 	else:
-		print("Invalid arguments. Use -h option for usage format.")
-		sys.exit()
+		print_err("Invalid number of arguments")
 
-
-	## Create list of IP addresses to ping
-
-	if ip_file == '':
-		ip_list = make_ip_list(ipBeg, ipEnd)
-	else:
-		try:
-			with open(ip_file, 'r') as f:
-				for line in f:
-					line = line.rstrip()
-					if not line == "":
-						if validate_ip(line):
-							ip_list.append(line)
-						else:
-							print("Invalid IP list file format -- IP list file must have one valid IPv4 address per line with no leading or trailing spaces.")
-							sys.exit()
-		except:
-			print("Error: invalid file '%s'" % (ip_file))
-			sys.exit()
 
 	## If hosts list exceeds 256, prompt for confirmation
 
 	if len(ip_list) > 256:
 		if not are_you_sure(len(ip_list)):
-			print("Exiting...")
 			sys.exit()
 
 	## Print selected options before starting the scan
@@ -225,25 +238,31 @@ def main():
 	print("Starting ping sweep on %s through %s...\n" % (ip_list[0], ip_list[-1]))
 		
 	if verbose:
-		print("[+] Verbose option set\n")
+		print("\033[1m\033[34m[+]\033[0m Verbose option set\n")
 
 	if timeout != 200:
-		print("[+] Timeout set to %s milliseconds\n" % (timeout))
+		print("\033[1m\033[34m[+]\033[0m Timeout set to %s milliseconds\n" % (timeout))
 
 	if reverse:
-		print("[+] Reverse option set - displaying failed pings\n")
+		print("\033[1m\033[34m[+]\033[0m Reverse option set - displaying failed pings\n")
 
 	if hostnames:
-		print("[+] Hostnames option set - resolving hosts\n")
+		print("\033[1m\033[34m[+]\033[0m Hostnames option set - resolving hosts\n")
 
 	if debug:
-		print("[+] Debug option set - displaying all pings\n")
+		print("\033[1m\033[34m[+]\033[0m Debug option set - displaying all pings\n")
 
-	print("Scan start: %s\n......" % (time.ctime()))
+
+
+	## Check if fping is installed
+
+	check_requirements()
+
 
 
 	## Begin scanning IP addresses by executing fping command on each IP
 
+	print("Scan start: %s\n......" % (time.ctime()))
 	success = 0
 	for ip in ip_list:
 		bash_string = "fping -a -c1 -t%s %s" % (timeout, ip)
@@ -251,6 +270,8 @@ def main():
 			proc = subprocess.Popen(bash_string.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 			output = proc.communicate()[0].split("\n")[0]
 			if debug:
+				if "1/1/0" in output:
+					success += 1
 				print(output)
 			else:
 				if reverse:
@@ -276,11 +297,11 @@ def main():
 							else:
 								print(output.split(" ",1)[0])
 		except:
-			print("\nExiting...")
+			print("\n\033[1m\033[91m[!]\033[0m Exiting...")
 			print("Scan stopped at IP %s on %s" % (ip, time.ctime()))
 			sys.exit()
 
-	print("......\nSuccessful pings: %s/%s (%s%s)" % (success, len(ip_list), (success * 100 / len(ip_list)), '%'))
+	print("......\nSuccessful pings: \033[1m\033[92m%s/%s\033[0m (%s%s)" % (success, len(ip_list), (success * 100 / len(ip_list)), '%'))
 	print("Scan finished at: %s" % (time.ctime()))
 
 if __name__ == '__main__':
