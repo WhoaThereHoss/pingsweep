@@ -15,27 +15,20 @@ This utility provides a simple interface allowing a user to quickly ping a large
 
 # Usage
 
-pingsweep [options] start-ip end-ip
-
-=============================
-
-Ping a range: `pingsweep 10.0.0.0 10.0.5.255`
-
-
-
-Ping a list: `pingsweep -l IP_list.txt`
-
-
-
-Ping a /24 C-block: `pingsweep 192.168.1.0`
+pingsweep [options] ip_range
 
 =============================
 
 ```
 pingsweep -h
-Usage: pingsweep [options] <start-ip> <end-ip>
 
-Example: pingsweep 172.16.0.1 172.16.255.255
+Usage: pingsweep [options] ip_range
+
+Examples:
+  pingsweep 10.0.0.0/24
+  pingsweep 10.0.0.0-255
+  pingsweep 10.0.0.0 10.0.0.255
+		
 
 Options:
   -h, --help                    show this help message and exit
