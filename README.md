@@ -1,9 +1,9 @@
 # pingsweep
-Lightweight Pingsweeper - quickly ping many hosts
+Quickly ping a range of hosts
 
 # Description
 
-This utility provides a simple interface allowing a user to quickly ping a large group of hosts by IPv4 address or by hostname.
+This utility provides a simple interface allowing a user to quickly ping a large group of hosts. Define a range of IPv4 addresses or define a list of hosts in a text file.
 
 ============================================
 
@@ -11,13 +11,6 @@ This utility provides a simple interface allowing a user to quickly ping a large
  - check connectivity of a list of networked devices
  - define a custom ping timeout for faster or more thorough scans
  - default output is in a list-friendly format
-
-
-# Usage
-
-pingsweep [options] ip_range
-
-=============================
 
 ```
 pingsweep -h
@@ -45,4 +38,3 @@ pingsweep is available as an installable python module. Try running:
 ```
 pip install pingsweep
 ```
-Or you can download and run pingsweep.py from this repo.
