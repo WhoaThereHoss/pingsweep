@@ -1,17 +1,6 @@
 # pingsweep
 Quickly ping a range of hosts
 
-# Description
-
-This utility provides a simple interface allowing a user to quickly ping a large group of hosts. Define a range of IPv4 addresses or define a list of hosts in a text file.
-
-============================================
-
- - begin enumeration on unknown networks
- - check connectivity of a list of networked devices
- - define a custom ping timeout for faster or more thorough scans
- - default output is in a list-friendly format
-
 ```
 pingsweep -h
 
@@ -33,8 +22,21 @@ Options:
   -v, --verbose                 include fping statistics for each ping
  ```
 
+
+# Description
+
+This utility provides a simple interface allowing a user to quickly ping a large group of hosts. Define a range of IPv4 addresses or define a list of hosts in a text file.
+
+============================================
+
+ - begin enumeration on unknown networks
+ - check connectivity of a list of networked devices
+ - define a custom ping timeout for faster or more thorough scans
+ - default output is in a list-friendly format
+
+
 # Installation
-pingsweep is available as an installable python module. Try running:
+pingsweep can be installed with pip. Try running:
 ```
 pip install pingsweep
 ```
